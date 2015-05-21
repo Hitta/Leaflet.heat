@@ -16,6 +16,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     initialize: function (latlngs, options) {
         this._latlngs = latlngs;
+        options.redrawOn = options.redrawOn || 'moveend'
         L.setOptions(this, options);
     },
 
@@ -53,7 +54,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         map._panes.overlayPane.appendChild(this._canvas);
 
-        map.on('moveend', this._reset, this);
+        map.on(this.options.redrawOn, this._reset, this);
 
         if (map.options.zoomAnimation && L.Browser.any3d) {
             map.on('zoomanim', this._animateZoom, this);
@@ -65,7 +66,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     onRemove: function (map) {
         map.getPanes().overlayPane.removeChild(this._canvas);
 
-        map.off('moveend', this._reset, this);
+        map.off(this.options.redrawOn, this._reset, this);
 
         if (map.options.zoomAnimation) {
             map.off('zoomanim', this._animateZoom, this);
